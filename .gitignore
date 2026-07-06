@@ -1,0 +1,27 @@
+# --- Build output ---
+build/
+bin/
+*.o
+*.obj
+*.s
+*.i
+*.a
+*.so
+*.dylib
+*.exe
+*.out
+
+# --- CMake generated files ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# --- Editor / IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# --- Sampler run I/O (uncomment if you run in-tree) ---
+# output/
+# *.log
