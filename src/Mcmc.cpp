@@ -111,13 +111,15 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
     if (constant.setting == 1)
     {
         //cout << "read data..." << endl;
+        // input files live under <workdir>/data
+        string datadir = constant.workdir + "/data/";
         // * x
         // two tmp variables
         string strX; // store a line as str
         vector<double> vecX; // store a line as vec
         // open file
         ifstream fileX;
-        fileX.open("../data/it_std.txt");
+        fileX.open(datadir + "it_std.txt");
         // assign
         int i = 0;
         while (getline(fileX, strX))
@@ -139,7 +141,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         // vector<double> vecZ; // store a line as vec
         // open file
         // ifstream fileZ;
-        // fileZ.open("../data/z_gen.txt");
+        // fileZ.open(datadir + "z_gen.txt");
         // assign
         // i = 0;
         // while (getline(fileZ, strZ))
@@ -160,7 +162,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecC11; // store a line as vec
         // open file
         ifstream fileC11;
-        fileC11.open("../data/age.txt");
+        fileC11.open(datadir + "age.txt");
         // assign
         i = 0;
         while (getline(fileC11, strC11))
@@ -181,7 +183,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecC12; // store a line as vec
         // open file
         ifstream fileC12;
-        fileC12.open("../data/sex.txt");
+        fileC12.open(datadir + "sex.txt");
         // assign
         i = 0;
         while (getline(fileC12, strC12))
@@ -202,7 +204,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecC2; // store a line as vec
         // open file
         ifstream fileC2;
-        fileC2.open("../data/c3.txt");
+        fileC2.open(datadir + "c3.txt");
         // assign
         i = 0;
         while (getline(fileC2, strC2))
@@ -224,7 +226,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecM; // store a line as vec
         // open file
         ifstream fileM;
-        fileM.open("../data/mtC.txt");
+        fileM.open(datadir + "mtC.txt");
         // assign
         i = 0;
         while (getline(fileM, strM))
@@ -257,7 +259,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecY; // store a line as vec
         // open file
         ifstream fileY;
-        fileY.open("../data/y.txt");
+        fileY.open(datadir + "y.txt");
         // assign
         i = 0;
         while (getline(fileY, strY))
@@ -278,7 +280,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecNi; // store a line as vec
         // open file
         ifstream fileNi;
-        fileNi.open("../data/nbhi.txt");
+        fileNi.open(datadir + "nbhi.txt");
         // assign
         i = 0;
         while (getline(fileNi, strNi))
@@ -301,7 +303,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecNj; // store a line as vec
         // open file
         ifstream fileNj;
-        fileNj.open("../data/nbhj.txt");
+        fileNj.open(datadir + "nbhj.txt");
         // assign
         i = 0;
         while (getline(fileNj, strNj))
@@ -324,7 +326,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         //vector<double> vecNn; // store a line as vec
         // open file
         //ifstream fileNn;
-        //fileNn.open("../data/nNbh.txt");
+        //fileNn.open(datadir + "nNbh.txt");
         // assign
         //i = 0;
         //while (getline(fileNn, strNn))
@@ -341,7 +343,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecS; // store a line as vec
         // open file
         ifstream fileS;
-        fileS.open("../data/idx_dis80_T2.txt");
+        fileS.open(datadir + "idx_dis80_T2.txt");
         // assign
         i = 0;
         while (getline(fileS, strS))
@@ -364,7 +366,7 @@ int Mcmc::readData(Constant constant, Generate generate, int rep)
         vector<double> vecV; // store a line as vec
         // open file
         ifstream fileV;
-        fileV.open("../data/validlocC.txt");
+        fileV.open(datadir + "validlocC.txt");
         // assign
         i = 0;
         while (getline(fileV, strV))
@@ -629,7 +631,12 @@ int Mcmc::updateB(Constant constant)
         barBetaV = 0.5*barBetaV/(npv+0.001);
         //cout << "barBetaV=" << barBetaV << endl;
         double mu = 0;
-        mu = (sumYMb(v) - gamma*sumXMb(v) - sumc2Mb.row(v)*b)/sigD - (mb.row(v).transpose().array()*sumBetaMb.array()).sum() - barBetaV/sig1Beta;
+        // NOTE (Python-driver fix): the cross-edge term
+        //   sum_i mb_iv * sum_{k!=v} beta_k mb_ik
+        // must sit INSIDE the 1/sigD factor, per Supplementary Material Eq. (2)
+        // and the Bayes-factor line (gv) below. The released code left it outside,
+        // so mu and gv only agreed when sigD==1; at sigD!=1 the beta chain diverged.
+        mu = (sumYMb(v) - gamma*sumXMb(v) - sumc2Mb.row(v)*b - (mb.row(v).transpose().array()*sumBetaMb.array()).sum())/sigD - barBetaV/sig1Beta;
         mu = sig2 * mu;
         //cout << "sumYMb(v)=" << sumYMb(v) << endl;
         //cout << "mu=" << mu << endl;

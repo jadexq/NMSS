@@ -6,6 +6,7 @@
 #define SIMU1_CONSTANT_H
 
 #include <iostream>
+#include <string>
 #include <Eigen/Dense>
 
 using namespace std;
@@ -14,6 +15,9 @@ using namespace Eigen;
 class Constant
 {
 public:
+    // *** working directory: reads <workdir>/data and <workdir>/config.txt,
+    //     writes <workdir>/output. Overridable via argv[1] (default ".").
+    string workdir = ".";
     // *** setting: 0-simulation, 1-real data (or read existing simulated data)
     int setting = 1;
     // 0-do not apply Cv, 1-appply Cv=sqrt(V)
@@ -111,6 +115,14 @@ public:
 
     // update tunings in each replication
     int changeTun(int rep);
+
+    // *** runtime configuration (added for the Python driver)
+    // override tuning/control members from a "key value" config file
+    // (dimensions are NOT read here; they are inferred from the data).
+    void loadConfig(const string& path);
+    // infer n, vv, py, mNnbh, nvl from the shapes of the data files in
+    // <dataDir>, with cross-file consistency checks (fatal on mismatch).
+    void inferDims(const string& dataDir);
 
     Constant();
 };

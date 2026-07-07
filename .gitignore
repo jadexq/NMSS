@@ -16,6 +16,13 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 
+# --- Third-party (fetched by scripts/get_eigen.sh) ---
+extern/
+
+# --- Python ---
+__pycache__/
+*.pyc
+
 # --- Editor / IDE / OS ---
 .idea/
 .vscode/

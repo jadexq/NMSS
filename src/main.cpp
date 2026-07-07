@@ -10,7 +10,7 @@
 using namespace std;
 using namespace Eigen;
 
-int main()
+int main(int argc, char* argv[])
 {
     // clock
     clock_t start_t, end_t;
@@ -21,6 +21,13 @@ int main()
     // *** instantiation "Constant"
     int rep=0;
     Constant constant;
+    // working directory (argv[1]) holds data/, config.txt and output/
+    if (argc > 1) constant.workdir = argv[1];
+    // runtime config (tuning + control) then dimensions inferred from data
+    constant.loadConfig(constant.workdir + "/config.txt");
+    constant.inferDims(constant.workdir + "/data");
+    // all posterior/estimate files are written under <workdir>/output
+    string outdir = constant.workdir + "/output/";
     cout << "setting: " << constant.setting << endl;
 
     // *** store rep values, and the quality for cross validation
@@ -40,7 +47,7 @@ int main()
     {
         cout << "replication " << rep+1 << endl;
         ofstream file_rep;
-        file_rep.open("../output/rep.txt");
+        file_rep.open(outdir + "rep.txt");
         file_rep << rep+1 << endl;
         file_rep.close();
 
@@ -168,86 +175,86 @@ int main()
 
         // write the samples, and cv quality of current replication
         ofstream file_alpha;
-        file_alpha.open("../output/samples_alpha.txt");
+        file_alpha.open(outdir + "samples_alpha.txt");
         file_alpha << samples_alpha << endl;
         file_alpha.close();
         ofstream file_zetaA;
-        file_zetaA.open("../output/samples_zetaA.txt");
+        file_zetaA.open(outdir + "samples_zetaA.txt");
         file_zetaA << samples_zetaA << endl;
         file_zetaA.close();
         ofstream file_a1;
-        file_a1.open("../output/samples_a1.txt");
+        file_a1.open(outdir + "samples_a1.txt");
         file_a1 << samples_a1 << endl;
         file_a1.close();
         ofstream file_a2;
-        file_a2.open("../output/samples_a2.txt");
+        file_a2.open(outdir + "samples_a2.txt");
         file_a2 << samples_a2 << endl;
         file_a2.close();
         ofstream file_beta;
-        file_beta.open("../output/samples_beta.txt");
+        file_beta.open(outdir + "samples_beta.txt");
         file_beta << samples_beta << endl;
         file_beta.close();
         ofstream file_zetaB;
-        file_zetaB.open("../output/samples_zetaB.txt");
+        file_zetaB.open(outdir + "samples_zetaB.txt");
         file_zetaB << samples_zetaB << endl;
         file_zetaB.close();
         ofstream file_gamma;
-        file_gamma.open("../output/samples_gamma.txt");
+        file_gamma.open(outdir + "samples_gamma.txt");
         file_gamma << samples_gamma << endl;
         file_gamma.close();
         ofstream file_b;
-        file_b.open("../output/samples_b.txt");
+        file_b.open(outdir + "samples_b.txt");
         file_b << samples_b << endl;
         file_b.close();
         ofstream file_sigE;
-        file_sigE.open("../output/samples_sigE.txt");
+        file_sigE.open(outdir + "samples_sigE.txt");
         file_sigE << samples_sigE << endl;
         file_sigE.close();
         // ofstream file_sigD;
-        // file_sigD.open("../output/samples_sigD.txt");
+        // file_sigD.open(outdir + "samples_sigD.txt");
         // file_sigD << samples_sigD << endl;
         // file_sigD.close();
     } // end loop rep
 
     // write the est of all replications
     ofstream file_repAlpha;
-    file_repAlpha.open("../output/rep_alpha.txt");
+    file_repAlpha.open(outdir + "rep_alpha.txt");
     file_repAlpha << rep_alpha << endl;
     file_repAlpha.close();
     ofstream file_repZetaA;
-    file_repZetaA.open("../output/rep_zetaA.txt");
+    file_repZetaA.open(outdir + "rep_zetaA.txt");
     file_repZetaA << rep_zetaA << endl;
     file_repZetaA.close();
     ofstream file_repA1;
-    file_repA1.open("../output/rep_a1.txt");
+    file_repA1.open(outdir + "rep_a1.txt");
     file_repA1 << rep_a1 << endl;
     file_repA1.close();
     ofstream file_repA2;
-    file_repA2.open("../output/rep_a2.txt");
+    file_repA2.open(outdir + "rep_a2.txt");
     file_repA2 << rep_a2 << endl;
     file_repA2.close();
     ofstream file_repBeta;
-    file_repBeta.open("../output/rep_beta.txt");
+    file_repBeta.open(outdir + "rep_beta.txt");
     file_repBeta << rep_beta << endl;
     file_repBeta.close();
     ofstream file_repZetaB;
-    file_repZetaB.open("../output/rep_zetaB.txt");
+    file_repZetaB.open(outdir + "rep_zetaB.txt");
     file_repZetaB << rep_zetaB << endl;
     file_repZetaB.close();
     ofstream file_repGamma;
-    file_repGamma.open("../output/rep_gamma.txt");
+    file_repGamma.open(outdir + "rep_gamma.txt");
     file_repGamma << rep_gamma << endl;
     file_repGamma.close();
     ofstream file_repB;
-    file_repB.open("../output/rep_b.txt");
+    file_repB.open(outdir + "rep_b.txt");
     file_repB << rep_b << endl;
     file_repB.close();
     ofstream file_repSigE;
-    file_repSigE.open("../output/rep_sigE.txt");
+    file_repSigE.open(outdir + "rep_sigE.txt");
     file_repSigE << rep_sigE << endl;
     file_repSigE.close();
     // ofstream file_repSigD;
-    // file_repSigD.open("../output/rep_sigD.txt");
+    // file_repSigD.open(outdir + "rep_sigD.txt");
     // file_repSigD << rep_sigD << endl;
     // file_repSigD.close();
 
